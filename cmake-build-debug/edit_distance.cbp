@@ -85,102 +85,6 @@
 					<DistClean command="/usr/bin/make -j2 -f &quot;/home/xt/mpkix-judgement/cmake-build-debug/example/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
-			<Target title="edit_distance_example">
-				<Option output="/home/xt/mpkix-judgement/cmake-build-debug/example/edit_distance_example" prefix_auto="0" extension_auto="0"/>
-				<Option working_dir="/home/xt/mpkix-judgement/cmake-build-debug/example"/>
-				<Option object_output="./"/>
-				<Option type="1"/>
-				<Option compiler="gcc"/>
-				<Compiler>
-					<Add directory="/home/xt/mpkix-judgement/include"/>
-					<Add directory="/usr/include/c++/5"/>
-					<Add directory="/usr/include/x86_64-linux-gnu/c++/5"/>
-					<Add directory="/usr/include/c++/5/backward"/>
-					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include"/>
-					<Add directory="/usr/local/include"/>
-					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed"/>
-					<Add directory="/usr/include/x86_64-linux-gnu"/>
-					<Add directory="/usr/include"/>
-				</Compiler>
-				<MakeCommands>
-					<Build command="/usr/bin/make -j2 -f &quot;/home/xt/mpkix-judgement/cmake-build-debug/example/Makefile&quot;  VERBOSE=1 edit_distance_example"/>
-					<CompileFile command="/usr/bin/make -j2 -f &quot;/home/xt/mpkix-judgement/cmake-build-debug/example/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -j2 -f &quot;/home/xt/mpkix-judgement/cmake-build-debug/example/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -j2 -f &quot;/home/xt/mpkix-judgement/cmake-build-debug/example/Makefile&quot;  VERBOSE=1 clean"/>
-				</MakeCommands>
-			</Target>
-			<Target title="edit_distance_example/fast">
-				<Option output="/home/xt/mpkix-judgement/cmake-build-debug/example/edit_distance_example" prefix_auto="0" extension_auto="0"/>
-				<Option working_dir="/home/xt/mpkix-judgement/cmake-build-debug/example"/>
-				<Option object_output="./"/>
-				<Option type="1"/>
-				<Option compiler="gcc"/>
-				<Compiler>
-					<Add directory="/home/xt/mpkix-judgement/include"/>
-					<Add directory="/usr/include/c++/5"/>
-					<Add directory="/usr/include/x86_64-linux-gnu/c++/5"/>
-					<Add directory="/usr/include/c++/5/backward"/>
-					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include"/>
-					<Add directory="/usr/local/include"/>
-					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed"/>
-					<Add directory="/usr/include/x86_64-linux-gnu"/>
-					<Add directory="/usr/include"/>
-				</Compiler>
-				<MakeCommands>
-					<Build command="/usr/bin/make -j2 -f &quot;/home/xt/mpkix-judgement/cmake-build-debug/example/Makefile&quot;  VERBOSE=1 edit_distance_example/fast"/>
-					<CompileFile command="/usr/bin/make -j2 -f &quot;/home/xt/mpkix-judgement/cmake-build-debug/example/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -j2 -f &quot;/home/xt/mpkix-judgement/cmake-build-debug/example/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -j2 -f &quot;/home/xt/mpkix-judgement/cmake-build-debug/example/Makefile&quot;  VERBOSE=1 clean"/>
-				</MakeCommands>
-			</Target>
-			<Target title="edit_script_example">
-				<Option output="/home/xt/mpkix-judgement/cmake-build-debug/example/edit_script_example" prefix_auto="0" extension_auto="0"/>
-				<Option working_dir="/home/xt/mpkix-judgement/cmake-build-debug/example"/>
-				<Option object_output="./"/>
-				<Option type="1"/>
-				<Option compiler="gcc"/>
-				<Compiler>
-					<Add directory="/home/xt/mpkix-judgement/include"/>
-					<Add directory="/usr/include/c++/5"/>
-					<Add directory="/usr/include/x86_64-linux-gnu/c++/5"/>
-					<Add directory="/usr/include/c++/5/backward"/>
-					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include"/>
-					<Add directory="/usr/local/include"/>
-					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed"/>
-					<Add directory="/usr/include/x86_64-linux-gnu"/>
-					<Add directory="/usr/include"/>
-				</Compiler>
-				<MakeCommands>
-					<Build command="/usr/bin/make -j2 -f &quot;/home/xt/mpkix-judgement/cmake-build-debug/example/Makefile&quot;  VERBOSE=1 edit_script_example"/>
-					<CompileFile command="/usr/bin/make -j2 -f &quot;/home/xt/mpkix-judgement/cmake-build-debug/example/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -j2 -f &quot;/home/xt/mpkix-judgement/cmake-build-debug/example/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -j2 -f &quot;/home/xt/mpkix-judgement/cmake-build-debug/example/Makefile&quot;  VERBOSE=1 clean"/>
-				</MakeCommands>
-			</Target>
-			<Target title="edit_script_example/fast">
-				<Option output="/home/xt/mpkix-judgement/cmake-build-debug/example/edit_script_example" prefix_auto="0" extension_auto="0"/>
-				<Option working_dir="/home/xt/mpkix-judgement/cmake-build-debug/example"/>
-				<Option object_output="./"/>
-				<Option type="1"/>
-				<Option compiler="gcc"/>
-				<Compiler>
-					<Add directory="/home/xt/mpkix-judgement/include"/>
-					<Add directory="/usr/include/c++/5"/>
-					<Add directory="/usr/include/x86_64-linux-gnu/c++/5"/>
-					<Add directory="/usr/include/c++/5/backward"/>
-					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include"/>
-					<Add directory="/usr/local/include"/>
-					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed"/>
-					<Add directory="/usr/include/x86_64-linux-gnu"/>
-					<Add directory="/usr/include"/>
-				</Compiler>
-				<MakeCommands>
-					<Build command="/usr/bin/make -j2 -f &quot;/home/xt/mpkix-judgement/cmake-build-debug/example/Makefile&quot;  VERBOSE=1 edit_script_example/fast"/>
-					<CompileFile command="/usr/bin/make -j2 -f &quot;/home/xt/mpkix-judgement/cmake-build-debug/example/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -j2 -f &quot;/home/xt/mpkix-judgement/cmake-build-debug/example/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -j2 -f &quot;/home/xt/mpkix-judgement/cmake-build-debug/example/Makefile&quot;  VERBOSE=1 clean"/>
-				</MakeCommands>
-			</Target>
 			<Target title="test">
 				<Option output="/home/xt/mpkix-judgement/cmake-build-debug/test/test" prefix_auto="0" extension_auto="0"/>
 				<Option working_dir="/home/xt/mpkix-judgement/cmake-build-debug/test"/>
@@ -233,12 +137,6 @@
 		<Unit filename="/home/xt/mpkix-judgement/example/benchmark.cpp">
 			<Option target="benchmark"/>
 			<Option target="test"/>
-		</Unit>
-		<Unit filename="/home/xt/mpkix-judgement/example/edit_distance_example.cpp">
-			<Option target="edit_distance_example"/>
-		</Unit>
-		<Unit filename="/home/xt/mpkix-judgement/example/edit_script_example.cpp">
-			<Option target="edit_script_example"/>
 		</Unit>
 		<Unit filename="/home/xt/mpkix-judgement/test/edit_distance.cpp">
 			<Option target="test"/>

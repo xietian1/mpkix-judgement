@@ -14,84 +14,195 @@ using boost::algorithm::sequence::unit_cost;
 #include <stdio.h>
 #include <string>
 #include <stdint.h>
+#include <iomanip>
+#include <sstream>
+
+
 //OPE library
 #include "sope_encode.h"
-
+#include "ope.hh"
 using namespace std;
-using namespace sope;
+#include <chrono>
 
-struct EncodedTuple {
-    size_t  len;
-    uint8_t tuple[64];     // for simplicity
+#include <openssl/evp.h>
+#include <openssl/aes.h>
+#include <openssl/err.h>
+#include <openssl/pem.h>
 
-    EncodedTuple(int ii, const char* str, double dd) {
-        *reinterpret_cast<uint32_t*>(tuple) = encode(ii);
-        len = sizeof(uint32_t);
-        size_t slen = strlen(str);
-        uint32_t eslen = encode(str, slen, (void*)(tuple+len));
-        len += eslen;
-        *reinterpret_cast<uint64_t*>(tuple+len) = encode(dd);
-        len += sizeof(uint64_t);
+int do_evp_sign(FILE * rsa_pkey_file, FILE * in_file)
+{
+    OpenSSL_add_all_digests();
+    ERR_load_crypto_strings();
+
+    EVP_PKEY * pkey = PEM_read_PrivateKey(rsa_pkey_file, NULL, NULL, NULL);
+    if (pkey == NULL) {
+        ERR_print_errors_fp(stderr);
+        return 1;
     }
 
-    ~EncodedTuple() { }
-};
+    fseek(in_file, 0, SEEK_END);
+    const size_t lSize = ftell(in_file);
+    rewind(in_file);
 
-#define MIN(x, y) ((x <= y) ? x : y)
+    EVP_MD_CTX md_ctx;
+    EVP_SignInit(&md_ctx, EVP_sha1());
 
-int compTuple(const EncodedTuple & t1, const EncodedTuple & t2) {
-    int rc = memcmp(t1.tuple, t2.tuple, MIN(t1.len,t2.len));
-    if (rc == 0) {
-        rc = (t1.len < t2.len) ? -1 : ( (t1.len > t2.len) ? 1 : 0 );
-    } else {
-        rc = (rc < 0) ? -1 : 1;
+    size_t len;
+    unsigned char buffer[4096];
+
+    size_t bytesLeft = lSize;
+    while (bytesLeft > 0) {
+        const size_t count = (bytesLeft > sizeof(buffer) ? sizeof(buffer) : bytesLeft);
+        len = fread(buffer, 1, count, in_file);
+        if (len != count) {
+            fprintf(stderr, "Read error! len (%u) != count (%u).\n", len, count);
+            EVP_PKEY_free(pkey);
+            return 1;
+        }
+        if (!EVP_SignUpdate(&md_ctx, buffer, len))
+        {
+            ERR_print_errors_fp(stderr);
+            EVP_PKEY_free(pkey);
+            return 1;
+        }
+        bytesLeft -= len;
     }
-    return rc;
+
+    unsigned int sig_len;
+    unsigned char * sig = (unsigned char *)malloc(EVP_PKEY_size(pkey));
+
+    if (!sig) {
+        fprintf(stderr, "Couldn't allocate %u bytes of memory.\n", EVP_PKEY_size(pkey));
+        EVP_PKEY_free(pkey);
+        return 1;
+    }
+
+    //run 1000 times to see the time
+
+    //for (int x  = 0; x < 1000; x++){
+    if (!EVP_SignFinal(&md_ctx, sig, &sig_len, pkey))
+    {
+        ERR_print_errors_fp(stderr);
+        EVP_PKEY_free(pkey);
+        free(sig);
+        return 1;
+    }
+    //}
+
+    /*
+    FILE * fTemp = fopen("out.sig", "wb");
+    if (fTemp) {
+        printf("Writing the signature to a file. Number of bytes: %u.\n", sig_len);
+        fwrite(sig, 1, sig_len, fTemp);
+        fclose(fTemp);
+    }
+
+    printf("Signature: \n");
+    for (unsigned int i = 0; i != sig_len; ++i)
+    {
+        printf("%02x", sig[i]);
+        if (i % 16 == 15)
+            printf("\n");
+    }
+    printf("\n");
+    */
+    //printf("free!!!\n");
+    EVP_PKEY_free(pkey);
+    free(sig);
+
+    return 0;
 }
+
+
 
 
 int main(int argc, char** argv) {
     char const* str1_user = "Oh, hello world.";
     char const* str1_id = "Hello world!!";
 
-
+// edit distance time
 
     //stringstream_tuple_output<unit_cost, char const*> out;
     //unsigned dist = edit_distance(str1_user, str1_id, _script = out);
     //std::cout << "dist= " << dist << "   edit operations= " << out.ss.str() << "\n";
+    auto t1 = chrono::high_resolution_clock::now();
+    for (int x = 0; x < 1000; x++){
+        unsigned dist = edit_distance(str1_user, str1_id);
+    }
+    //cout << "dist=" << dist << endl;
+    auto t2 = chrono::high_resolution_clock::now();
+    auto duration1 = chrono::duration_cast<chrono::microseconds>(t2 - t1).count();
+    cout << "Edit Distance:" << duration1 << endl;
 
-    unsigned dist = edit_distance(str1_user, str1_id);
-    cout << "dist=" << dist;
 
-    EncodedTuple tuple1(10, "This is a string", 1234.5678),
-            tuple2(-10, "This is a string", 12345.6789),
-            tuple3(100, "This is a string", 1234.5678),
-            tuple4(10, "This is a string1", 1234.5678),
-            tuple5(10, "This is a strin", 1234.5678),
-            tuple6(10, "This is a string", -1234.5678),
-            tuple7(10, "This is a string", 1234.5678);
+    // plaintext range's length in bits (plaintexts are in [0, 2**P-1]
+    unsigned int P = 32;
+    // ciphertext range's length in bits (ciphertexts are in [0, 2**C-1]
+    unsigned int C = 64;
 
-    printf("Expected results:\n");
-    printf("1 -1 -1 1 1 0\n");
+    //OPE o("S0M3 $TR@NG Key", P, C);
+    OPE o("S0M3$TR@NGKeySSSSSSSSSSSSSSSS", P, C);
 
-    int rc = compTuple(tuple1, tuple2);
-    printf("%d ", rc);
 
-    rc = compTuple(tuple1, tuple3);
-    printf("%d ", rc);
+    // it works with ZZ instead of usual integers
+    NTL::ZZ m1 = NTL::to_ZZ(13);
+    NTL::ZZ m2 = NTL::to_ZZ(50);
 
-    rc = compTuple(tuple1, tuple4);
-    printf("%d ", rc);
+    auto t3 = chrono::high_resolution_clock::now();
+    for (int x  = 0; x < 1000; x++){
+        NTL::ZZ c1 = o.encrypt(m1);
+    }
 
-    rc = compTuple(tuple1, tuple5);
-    printf("%d ", rc);
+    //NTL::ZZ c2 = o.encrypt(m2);
 
-    rc = compTuple(tuple1, tuple6);
-    printf("%d ", rc);
+    //cout << "m1 = " << m1 << endl;
+    //cout << "m2 = " << m2 << endl;
+    //cout << "enc(m1) = " << c1 << endl;
+    //cout << "enc(m2) = " << c2 << endl;
+    auto t4 = chrono::high_resolution_clock::now();
 
-    rc = compTuple(tuple1, tuple7);
-    printf("%d\n", rc);
+    auto duration2 = chrono::duration_cast<chrono::microseconds>(t4 - t3).count();
+    cout << "1000 times OPE:" << duration2 << endl;
 
+
+//sha256 1000 times test
+    auto t5 = chrono::high_resolution_clock::now();
+    for (int x  = 0; x < 1000; x++){
+        auto v = sha256::hash(str1_user);
+    }
+    auto t6 = chrono::high_resolution_clock::now();
+    auto duration3 = chrono::duration_cast<chrono::microseconds>(t6 - t5).count();
+    cout << "1000 SHA256:" << duration3 << endl;
+
+    t1 = chrono::high_resolution_clock::now();
+    for (int x = 0; x < 1000; x++){
+        FILE *keyfile = fopen("/home/xt/mpkix-judgement/key-and-file/key", "r");
+        FILE *contentfile = fopen("/home/xt/mpkix-judgement/key-and-file/info", "r");
+        do_evp_sign(keyfile, contentfile);
+    }
+
+    t2 = chrono::high_resolution_clock::now();
+
+    duration1 = chrono::duration_cast<chrono::microseconds>(t2 - t1).count();
+    cout << "PKI222:" << duration1 << endl;
+
+
+    /*
+    if (c1 < c2){
+        cout << "Preserving the order!" << endl;
+    }else{
+        cout << "o.O ????? OPE not working!" << endl;
+    }
+
+    NTL::ZZ dec_m1 = o.decrypt(c1);
+    NTL::ZZ dec_m2 = o.decrypt(c2);
+
+    if (m1 == dec_m1 && m2 == dec_m2){
+        cout << "Decryption working fine." << endl;
+    }else{
+        cout << "Decryption NOT working." << endl;
+    }
+    */
 
     return 0;
 }
