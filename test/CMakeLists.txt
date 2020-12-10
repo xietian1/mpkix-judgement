@@ -1,0 +1,9 @@
+include_directories(${edit_distance_SOURCE_DIR}/include)
+
+add_executable(test
+               edit_distance_test.cpp
+               edit_distance.cpp
+               edit_distance_script.cpp
+        ../example/benchmark.cpp)
+include_directories(${Boost_INCLUDE_DIR})
+target_link_libraries(test ${Boost_LIBRARIES})
