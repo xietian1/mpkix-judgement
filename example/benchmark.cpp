@@ -114,26 +114,13 @@ int do_evp_sign(FILE * rsa_pkey_file, FILE * in_file)
 }
 
 
-
-
-int main(int argc, char** argv) {
-    char const* str1_user = "Oh, hello world.";
-    char const* str1_id = "Hello world!!";
-
-// edit distance time
-
-    //stringstream_tuple_output<unit_cost, char const*> out;
-    //unsigned dist = edit_distance(str1_user, str1_id, _script = out);
-    //std::cout << "dist= " << dist << "   edit operations= " << out.ss.str() << "\n";
-    auto t1 = chrono::high_resolution_clock::now();
-    for (int x = 0; x < 1000; x++){
-        unsigned dist = edit_distance(str1_user, str1_id);
-    }
-    //cout << "dist=" << dist << endl;
-    auto t2 = chrono::high_resolution_clock::now();
-    auto duration1 = chrono::duration_cast<chrono::microseconds>(t2 - t1).count();
-    cout << "Edit Distance:" << duration1 << endl;
-
+/*
+ *  input: int i: plaintext
+ *  return: NTL:ZZ: Order-repserving ciphertexts
+ *
+*/
+NTL::ZZ OPEncryption(int plaintext){
+    NTL::ZZ m1 = NTL::to_ZZ(plaintext);
 
     // plaintext range's length in bits (plaintexts are in [0, 2**P-1]
     unsigned int P = 32;
@@ -143,29 +130,70 @@ int main(int argc, char** argv) {
     //OPE o("S0M3 $TR@NG Key", P, C);
     OPE o("S0M3$TR@NGKeySSSSSSSSSSSSSSSS", P, C);
 
-
     // it works with ZZ instead of usual integers
-    NTL::ZZ m1 = NTL::to_ZZ(13);
-    NTL::ZZ m2 = NTL::to_ZZ(50);
+    //NTL::ZZ m1 = NTL::to_ZZ(13);
+    //NTL::ZZ m2 = NTL::to_ZZ(50);
 
-    auto t3 = chrono::high_resolution_clock::now();
-    for (int x  = 0; x < 1000; x++){
-        NTL::ZZ c1 = o.encrypt(m1);
-    }
-
+    NTL::ZZ c1 = o.encrypt(m1);
     //NTL::ZZ c2 = o.encrypt(m2);
 
     //cout << "m1 = " << m1 << endl;
     //cout << "m2 = " << m2 << endl;
     //cout << "enc(m1) = " << c1 << endl;
     //cout << "enc(m2) = " << c2 << endl;
-    auto t4 = chrono::high_resolution_clock::now();
 
+    /*
+  if (c1 < c2){
+      cout << "Preserving the order!" << endl;
+  }else{
+      cout << "o.O ????? OPE not working!" << endl;
+  }
+
+  NTL::ZZ dec_m1 = o.decrypt(c1);
+  NTL::ZZ dec_m2 = o.decrypt(c2);
+
+  if (m1 == dec_m1 && m2 == dec_m2){
+      cout << "Decryption working fine." << endl;
+  }else{
+      cout << "Decryption NOT working." << endl;
+  }
+  */
+
+    return c1;
+
+}
+
+
+
+int main(int argc, char** argv) {
+    char const* str1_user = "Oh, hello world.";
+    char const* str1_id = "Hello world!!";
+
+    // edit distance time
+
+    //stringstream_tuple_output<unit_cost, char const*> out;
+    //unsigned dist = edit_distance(str1_user, str1_id, _script = out);
+    //std::cout << "dist= " << dist << "   edit operations= " << out.ss.str() << "\n";
+    auto t1 = chrono::high_resolution_clock::now();
+    for (int x = 0; x < 50; x++){
+        unsigned dist = edit_distance(str1_user, str1_id);
+    }
+    auto t2 = chrono::high_resolution_clock::now();
+    auto duration1 = chrono::duration_cast<chrono::microseconds>(t2 - t1).count();
+
+    cout << "1000 times Edit Distance:" << duration1 << endl;
+
+
+    auto t3 = chrono::high_resolution_clock::now();
+    for (int x  = 0; x < 10; x++){
+        OPEncryption(13);
+    }
+    auto t4 = chrono::high_resolution_clock::now();
     auto duration2 = chrono::duration_cast<chrono::microseconds>(t4 - t3).count();
     cout << "1000 times OPE:" << duration2 << endl;
 
 
-//sha256 1000 times test
+    //sha256 1000 times test
     auto t5 = chrono::high_resolution_clock::now();
     for (int x  = 0; x < 1000; x++){
         auto v = sha256::hash(str1_user);
@@ -174,35 +202,18 @@ int main(int argc, char** argv) {
     auto duration3 = chrono::duration_cast<chrono::microseconds>(t6 - t5).count();
     cout << "1000 SHA256:" << duration3 << endl;
 
+
+    // 1000 times PKI ESign
     t1 = chrono::high_resolution_clock::now();
-    for (int x = 0; x < 1000; x++){
+    for (int x = 0; x < 10; x++){
         FILE *keyfile = fopen("/home/xt/mpkix-judgement/key-and-file/key", "r");
         FILE *contentfile = fopen("/home/xt/mpkix-judgement/key-and-file/info", "r");
         do_evp_sign(keyfile, contentfile);
     }
-
     t2 = chrono::high_resolution_clock::now();
-
     duration1 = chrono::duration_cast<chrono::microseconds>(t2 - t1).count();
-    cout << "PKI222:" << duration1 << endl;
+    cout << "1000 times ESign:" << duration1 << endl;
 
-
-    /*
-    if (c1 < c2){
-        cout << "Preserving the order!" << endl;
-    }else{
-        cout << "o.O ????? OPE not working!" << endl;
-    }
-
-    NTL::ZZ dec_m1 = o.decrypt(c1);
-    NTL::ZZ dec_m2 = o.decrypt(c2);
-
-    if (m1 == dec_m1 && m2 == dec_m2){
-        cout << "Decryption working fine." << endl;
-    }else{
-        cout << "Decryption NOT working." << endl;
-    }
-    */
 
     return 0;
 }
